@@ -166,7 +166,6 @@ h4,
 .category-list-item,
 .boxed,
 .user-main .about,
-.user-card,
 .d-modal .modal-inner-container,
 .menu-panel,
 .search-menu .results,
@@ -180,6 +179,15 @@ h4,
   transition:
     border-color 0.35s ease,
     box-shadow 0.35s ease;
+}
+
+// Keep user-card popup clean — glass on card content only
+.user-card .card-content {
+  background: var(--fr-surface);
+  border: 1px solid var(--fr-border);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: var(--fr-radius);
 }
 
 .topic-list-item:hover,
@@ -422,10 +430,9 @@ a {
   }
 }
 
-// ── Input fields ──
+// ── Input fields (exclude search banner — prevents discolored icon patch) ──
 
 .d-editor-input,
-input[type="text"],
 input[type="password"],
 input[type="email"],
 textarea,
@@ -438,6 +445,32 @@ textarea,
   &:focus-within {
     border-color: var(--fr-border-hover);
     box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.2);
+  }
+}
+
+// Welcome / header search — uniform background, no dark patches on icon
+.search-menu-container,
+.welcome-banner .search-menu,
+.search-banner,
+.header-search {
+  .search-input,
+  .search-bar,
+  .searching,
+  .search-icon,
+  .search-icon .d-icon,
+  input[type="text"],
+  input.search-query {
+    background: transparent !important;
+    backdrop-filter: none !important;
+    border: none;
+    box-shadow: none;
+  }
+
+  .search-input,
+  .search-bar {
+    background: rgba(12, 12, 18, 0.55) !important;
+    border: 1px solid var(--fr-border);
+    border-radius: var(--fr-radius);
   }
 }
 
@@ -455,29 +488,16 @@ textarea,
 }
 
 @mixin fr-leaddeveloper-username {
-  position: relative;
-
   > a,
   a {
     @include fr-username-gradient(
-      linear-gradient(180deg, var(--fr-accent-blue) 0%, #fff 70%)
+      linear-gradient(
+        180deg,
+        var(--fr-accent-blue-bright) 0%,
+        var(--fr-accent-blue-dim) 100%
+      )
     );
     font-weight: 600;
-  }
-
-  &::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(
-      90deg,
-      var(--fr-accent-blue),
-      var(--fr-accent-red)
-    );
-    pointer-events: none;
   }
 }
 
@@ -502,7 +522,7 @@ span.group--lead_developer,
 .names span.LeadDeveloper,
 .names span.group--LeadDeveloper,
 .names span.group--leaddeveloper,
-.user-card.LeadDeveloper .names span,
+.user-card.group-LeadDeveloper .names span,
 .user-card.group--LeadDeveloper .names span,
 .user-main .names span.LeadDeveloper,
 .user-main .names span.group--LeadDeveloper,
@@ -525,7 +545,7 @@ span.group--developers,
 .names span.Developers,
 .names span.group--Developers,
 .names span.group--developers,
-.user-card.Developers .names span,
+.user-card.group-Developers .names span,
 .user-card.group--Developers .names span,
 .user-main .names span.Developers,
 .user-main .names span.group--Developers,
@@ -541,28 +561,45 @@ span.group--developers,
   @include fr-developer-username;
 }
 
-// User card / profile when group class is on the parent container
-.user-card.Developers,
-.user-card.group--Developers {
+// User card — group class may be on card root OR on the avatar link only
+.user-card.group-Developers,
+.user-card.group--Developers,
+.user-card:has(a.group-Developers),
+.user-card:has(a.group--Developers) {
   .username a,
-  .names span a {
+  .names span a,
+  .user-card-username a,
+  .first-row a[data-user-card],
+  a[data-user-card].username,
+  .names a[data-user-card] {
     color: var(--fr-accent-blue) !important;
     -webkit-text-fill-color: var(--fr-accent-blue);
+    background: none;
   }
 }
 
-.user-card.LeadDeveloper,
-.user-card.group--LeadDeveloper {
+.user-card.group-LeadDeveloper,
+.user-card.group--LeadDeveloper,
+.user-card:has(a.group-LeadDeveloper),
+.user-card:has(a.group--LeadDeveloper) {
   .username a,
-  .names span a {
+  .names span a,
+  .user-card-username a,
+  .first-row a[data-user-card],
+  a[data-user-card].username,
+  .names a[data-user-card] {
     @include fr-username-gradient(
-      linear-gradient(180deg, var(--fr-accent-blue) 0%, #fff 70%)
+      linear-gradient(
+        180deg,
+        var(--fr-accent-blue-bright) 0%,
+        var(--fr-accent-blue-dim) 100%
+      )
     );
     font-weight: 600;
   }
 }
 
-.user-main.Developers,
+.user-main.group-Developers,
 .user-main.group--Developers {
   .username a,
   .user-profile-names a,
@@ -572,59 +609,167 @@ span.group--developers,
   }
 }
 
-.user-main.LeadDeveloper,
+.user-main.group-LeadDeveloper,
 .user-main.group--LeadDeveloper {
   .username a,
   .user-profile-names a,
   h1.username a {
     @include fr-username-gradient(
-      linear-gradient(180deg, var(--fr-accent-blue) 0%, #fff 70%)
+      linear-gradient(
+        180deg,
+        var(--fr-accent-blue-bright) 0%,
+        var(--fr-accent-blue-dim) 100%
+      )
     );
     font-weight: 600;
   }
 }
 
-// ── Staff avatar rings (Developers + LeadDeveloper) ──
+// Community About page — avatar link carries group class, username span often does not
+.about .user-info:has(a.group-LeadDeveloper) .username a,
+.about .user-info:has(a.group--LeadDeveloper) .username a,
+.about .user-info:has(.user-title--primary-group-LeadDeveloper) .username a,
+.group-box .user-info:has(a.group-LeadDeveloper) .username a,
+.group-box .user-info:has(a.group-Developers) .username a {
+  @include fr-username-gradient(
+    linear-gradient(
+      180deg,
+      var(--fr-accent-blue-bright) 0%,
+      var(--fr-accent-blue-dim) 100%
+    )
+  );
+  font-weight: 600;
+}
+
+.about .user-info:has(a.group-Developers) .username a,
+.about .user-info:has(a.group--Developers) .username a,
+.about .user-info:has(.user-title--primary-group-Developers) .username a {
+  color: var(--fr-accent-blue) !important;
+  -webkit-text-fill-color: var(--fr-accent-blue);
+}
+
+// ── Staff avatar rings (single clean stroke) ──
 
 @mixin fr-staff-avatar-ring-developer {
-  outline: 2px solid var(--fr-accent-blue);
+  outline: 2px solid var(--fr-accent-blue-dim);
+  outline-offset: 2px;
+  box-shadow: 0 0 6px var(--fr-glow-blue);
+}
+
+@mixin fr-staff-avatar-ring-lead {
+  outline: 2px solid var(--fr-accent-blue-bright);
   outline-offset: 2px;
   box-shadow: 0 0 8px var(--fr-glow-blue);
 }
 
-@mixin fr-staff-avatar-ring-lead {
-  outline: 2px solid var(--fr-accent-blue);
-  outline-offset: 2px;
-  box-shadow:
-    0 0 0 3px var(--fr-accent-red),
-    0 0 10px var(--fr-glow-blue);
+// Wrapper-level classes from customUserAvatarClasses
+.fr-staff-avatar--developers img.avatar,
+a.fr-staff-avatar--developers img.avatar {
+  @include fr-staff-avatar-ring-developer;
 }
 
-// JS-added classes + Discourse native group classes on poster links
+.fr-staff-avatar--leaddeveloper img.avatar,
+a.fr-staff-avatar--leaddeveloper img.avatar {
+  @include fr-staff-avatar-ring-lead;
+}
+
+// Discourse native group classes on poster links
 .fr-staff-avatar--developers img.avatar,
 .fr-staff-avatar--developers.avatar,
+img.avatar.fr-staff-avatar--developers,
 a.group-Developers img.avatar,
 a.group-Developers .avatar,
 .topic-list .posters a.group-Developers img.avatar,
 .topic-post.group-Developers .topic-avatar img.avatar,
 .topic-post.group--Developers .topic-avatar img.avatar,
 .topic-post.group--developers .topic-avatar img.avatar,
-.user-card.Developers img.avatar,
-.user-card.group--Developers img.avatar {
+.user-card.group-Developers img.avatar,
+.user-card.group--Developers img.avatar,
+.sidebar-section .topic-list a.group-Developers img.avatar,
+.navigation-categories .column-right a.group-Developers img.avatar,
+.latest-topic-list-item a.group-Developers img.avatar,
+.about .user-info a.group-Developers img.avatar {
   @include fr-staff-avatar-ring-developer;
 }
 
 .fr-staff-avatar--leaddeveloper img.avatar,
 .fr-staff-avatar--leaddeveloper.avatar,
+img.avatar.fr-staff-avatar--leaddeveloper,
 a.group-LeadDeveloper img.avatar,
 a.group-LeadDeveloper .avatar,
 .topic-list .posters a.group-LeadDeveloper img.avatar,
 .topic-post.group-LeadDeveloper .topic-avatar img.avatar,
 .topic-post.group--LeadDeveloper .topic-avatar img.avatar,
 .topic-post.group--leaddeveloper .topic-avatar img.avatar,
-.user-card.LeadDeveloper img.avatar,
-.user-card.group--LeadDeveloper img.avatar {
+.user-card.group-LeadDeveloper img.avatar,
+.user-card.group--LeadDeveloper img.avatar,
+.sidebar-section .topic-list a.group-LeadDeveloper img.avatar,
+.navigation-categories .column-right a.group-LeadDeveloper img.avatar,
+.latest-topic-list-item a.group-LeadDeveloper img.avatar,
+.about .user-info a.group-LeadDeveloper img.avatar {
   @include fr-staff-avatar-ring-lead;
+}
+
+// Dev team badges in posts (LEAD DEV / DEV)
+@if $fr_dev_badges_enabled {
+  .names span.LeadDeveloper,
+  .names span.group--LeadDeveloper,
+  .names span.group--leaddeveloper {
+    &::after {
+      content: "LEAD DEV";
+      display: inline;
+      margin-left: 0.35em;
+      padding: 0.1em 0.45em;
+      font-family: var(--fr-font-display);
+      font-size: 0.55rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      vertical-align: middle;
+      color: var(--fr-accent-blue-bright);
+      background: rgba(59, 130, 246, 0.15);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      border-radius: 2px;
+      position: static;
+      height: auto;
+      background-image: none;
+      pointer-events: none;
+    }
+  }
+
+  .names span.Developers,
+  .names span.group--Developers,
+  .names span.group--developers {
+    &::after {
+      content: "DEV";
+      display: inline;
+      margin-left: 0.35em;
+      padding: 0.1em 0.45em;
+      font-family: var(--fr-font-display);
+      font-size: 0.55rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      vertical-align: middle;
+      color: var(--fr-accent-blue);
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.25);
+      border-radius: 2px;
+      position: static;
+      height: auto;
+      background-image: none;
+      pointer-events: none;
+    }
+  }
+
+  // Hide post badges on profile header (profile has its own larger badges)
+  .user-main .user-profile-names span.LeadDeveloper::after,
+  .user-main .user-profile-names span.Developers::after,
+  .user-main .user-profile-names span.group--LeadDeveloper::after,
+  .user-main .user-profile-names span.group--Developers::after {
+    content: none;
+    display: none;
+  }
 }
 
 // ── User profile staff distinction ──
@@ -679,33 +824,27 @@ a.group-LeadDeveloper .avatar,
   }
 }
 
-.user-main.LeadDeveloper .user-profile-avatar img.avatar,
+.user-main.group-LeadDeveloper .user-profile-avatar img.avatar,
 .user-main.group--LeadDeveloper .user-profile-avatar img.avatar,
 .user-main:has(.LeadDeveloper) .user-profile-avatar img.avatar,
 .user-main:has(.group--LeadDeveloper) .user-profile-avatar img.avatar {
   @include fr-staff-avatar-ring-lead;
 }
 
-.user-main.Developers .user-profile-avatar img.avatar,
+.user-main.group-Developers .user-profile-avatar img.avatar,
 .user-main.group--Developers .user-profile-avatar img.avatar,
 .user-main:has(.Developers) .user-profile-avatar img.avatar,
 .user-main:has(.group--Developers) .user-profile-avatar img.avatar {
   @include fr-staff-avatar-ring-developer;
 }
 
-.user-main.LeadDeveloper .about.collapsed-info,
+.user-main.group-LeadDeveloper .about.collapsed-info,
 .user-main.group--LeadDeveloper .about.collapsed-info,
 .user-main:has(.LeadDeveloper) .about.collapsed-info,
 .user-main:has(.group--LeadDeveloper) .about.collapsed-info,
-.user-main.Developers .about.collapsed-info,
+.user-main.group-Developers .about.collapsed-info,
 .user-main.group--Developers .about.collapsed-info,
 .user-main:has(.Developers) .about.collapsed-info,
 .user-main:has(.group--Developers) .about.collapsed-info {
-  border-top: 2px solid transparent;
-  border-image: linear-gradient(
-      90deg,
-      var(--fr-accent-blue),
-      var(--fr-accent-red)
-    )
-    1;
+  border-top: 2px solid rgba(59, 130, 246, 0.35);
 }

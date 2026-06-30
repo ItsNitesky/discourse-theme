@@ -53,6 +53,7 @@ Under **Admin → Customize → Themes → First Response → Settings**:
 |---------|-------------|
 | **fr_logo_url** | Header logo URL (defaults to `https://firstresponsegame.com/logo.png`) |
 | **fr_enable_atmospheric_bg** | Toggle the subtle blue/red gradient background |
+| **fr_dev_badges_enabled** | Show LEAD DEV / DEV badges next to usernames in posts |
 
 You can also upload a logo via **Admin → Settings → Branding → Logo** and clear `fr_logo_url` to use that instead.
 
