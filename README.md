@@ -79,12 +79,14 @@ On user profiles, a **Lead Developer** or **Development Team** badge appears nex
 
 ### Prerequisites
 
-**Developers** and **LeadDeveloper** must be set as each user's **Primary Group**:
+**Developers** and **LeadDeveloper** must be set as each user's **Primary Group** for Discourse to add the CSS classes this theme targets:
 
 1. Go to **Admin → Users → [username]**
 2. Under Groups, set **Primary Group** to `Developers` or `LeadDeveloper`
 
-Verify CSS class names in DevTools on a test post. Discourse lowercases group names (e.g. `LeadDeveloper` → `group--leaddeveloper`).
+Being a member of the group is not enough on its own — the primary group controls which class Discourse adds to usernames and avatars. If styling does not appear, verify the primary group is set and inspect the username element in DevTools. You should see a class like `Developers`, `LeadDeveloper`, `group--Developers`, or `group--LeadDeveloper`.
+
+Verify CSS class names in DevTools on a test post.
 
 ## Local development
 

@@ -25,6 +25,15 @@
   --fr-font-display: "Oswald", system-ui, sans-serif;
   --fr-font-body: "Inter", system-ui, sans-serif;
   --fr-radius: 2px;
+
+  // Discourse nav/sidebar tokens — prevent bright active-tab fill
+  --d-nav-selected-bg: rgba(59, 130, 246, 0.12);
+  --d-nav-selected-color: #f0f0f2;
+  --d-nav-hover-bg: rgba(255, 255, 255, 0.05);
+  --d-nav-hover-color: #f0f0f2;
+  --d-sidebar-highlight-background: rgba(59, 130, 246, 0.12);
+  --d-sidebar-highlight-color: #f0f0f2;
+  --highlight-medium: #12121c;
 }
 
 // ── Atmospheric background ──
@@ -330,8 +339,10 @@ h4,
 .horizontal-overflow-nav .nav-pills > li > a.active,
 .group-nav .nav-pills > li > a.active,
 .user-navigation .nav-pills > li > a.active,
-.admin-controls .nav-pills > li > a.active {
-  background-color: rgba(59, 130, 246, 0.1) !important;
+.user-navigation.nav-stacked .nav-pills > li > a.active,
+.admin-controls .nav-pills > li > a.active,
+.group-navigation .nav-pills > li > a.active {
+  background-color: rgba(59, 130, 246, 0.12) !important;
   color: var(--fr-text-primary) !important;
   border: 1px solid rgba(59, 130, 246, 0.25);
   border-radius: var(--fr-radius);
@@ -341,6 +352,28 @@ h4,
   .svg-icon {
     color: var(--fr-accent-blue) !important;
   }
+}
+
+// Group / admin sidebar (Admin, About, Topics, Users, etc.)
+.sidebar-section-link.sidebar-section-link--active,
+.sidebar-section-link.sidebar-section-link--active:hover,
+.sidebar-section-link.sidebar-section-link--active:focus,
+.sidebar-section-link.active,
+a.sidebar-section-link--active {
+  background: rgba(59, 130, 246, 0.12) !important;
+  color: var(--fr-text-primary) !important;
+  border-radius: var(--fr-radius);
+
+  .sidebar-section-link-content-text,
+  .d-icon,
+  .svg-icon {
+    color: var(--fr-text-primary) !important;
+  }
+}
+
+.sidebar-section-link:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--fr-text-primary);
 }
 
 // ── Links ──
@@ -409,6 +442,10 @@ textarea,
 }
 
 // ── Dev team username styling (LeadDeveloper + Developers only) ──
+// Discourse emits group classes in several formats depending on context:
+//   span.Developers / span.LeadDeveloper (legacy username class)
+//   span.group--developers / span.group--leaddeveloper (prefixed, lowercase)
+//   span.group--Developers / span.group--LeadDeveloper (prefixed, original case)
 
 @mixin fr-username-gradient($gradient) {
   background: $gradient;
@@ -447,64 +484,157 @@ textarea,
 @mixin fr-developer-username {
   > a,
   a {
-    color: var(--fr-accent-blue);
+    color: var(--fr-accent-blue) !important;
     -webkit-text-fill-color: var(--fr-accent-blue);
 
     &:hover {
-      color: var(--fr-accent-blue-bright);
+      color: var(--fr-accent-blue-bright) !important;
       -webkit-text-fill-color: var(--fr-accent-blue-bright);
     }
   }
 }
 
-// Global — posts, topic lists, user directory, user card, profile, chat
+// LeadDeveloper — all known Discourse class variants
+span.LeadDeveloper,
+span.group--LeadDeveloper,
 span.group--leaddeveloper,
-span.username.group--leaddeveloper {
+span.group--lead_developer,
+.names span.LeadDeveloper,
+.names span.group--LeadDeveloper,
+.names span.group--leaddeveloper,
+.user-card.LeadDeveloper .names span,
+.user-card.group--LeadDeveloper .names span,
+.user-main .names span.LeadDeveloper,
+.user-main .names span.group--LeadDeveloper,
+.user-main .user-profile-names span.LeadDeveloper,
+.user-main .user-profile-names span.group--LeadDeveloper,
+.directory-table span.LeadDeveloper,
+.directory-table span.group--LeadDeveloper,
+.directory-table span.group--leaddeveloper,
+.group-members span.LeadDeveloper,
+.group-members span.group--LeadDeveloper,
+.about span.LeadDeveloper,
+.about span.group--LeadDeveloper {
   @include fr-leaddeveloper-username;
 }
 
+// Developers — all known Discourse class variants
+span.Developers,
+span.group--Developers,
 span.group--developers,
-span.username.group--developers {
+.names span.Developers,
+.names span.group--Developers,
+.names span.group--developers,
+.user-card.Developers .names span,
+.user-card.group--Developers .names span,
+.user-main .names span.Developers,
+.user-main .names span.group--Developers,
+.user-main .user-profile-names span.Developers,
+.user-main .user-profile-names span.group--Developers,
+.directory-table span.Developers,
+.directory-table span.group--Developers,
+.directory-table span.group--developers,
+.group-members span.Developers,
+.group-members span.group--Developers,
+.about span.Developers,
+.about span.group--Developers {
   @include fr-developer-username;
+}
+
+// User card / profile when group class is on the parent container
+.user-card.Developers,
+.user-card.group--Developers {
+  .username a,
+  .names span a {
+    color: var(--fr-accent-blue) !important;
+    -webkit-text-fill-color: var(--fr-accent-blue);
+  }
+}
+
+.user-card.LeadDeveloper,
+.user-card.group--LeadDeveloper {
+  .username a,
+  .names span a {
+    @include fr-username-gradient(
+      linear-gradient(180deg, var(--fr-accent-blue) 0%, #fff 70%)
+    );
+    font-weight: 600;
+  }
+}
+
+.user-main.Developers,
+.user-main.group--Developers {
+  .username a,
+  .user-profile-names a,
+  h1.username a {
+    color: var(--fr-accent-blue) !important;
+    -webkit-text-fill-color: var(--fr-accent-blue);
+  }
+}
+
+.user-main.LeadDeveloper,
+.user-main.group--LeadDeveloper {
+  .username a,
+  .user-profile-names a,
+  h1.username a {
+    @include fr-username-gradient(
+      linear-gradient(180deg, var(--fr-accent-blue) 0%, #fff 70%)
+    );
+    font-weight: 600;
+  }
 }
 
 // ── Staff avatar rings (Developers + LeadDeveloper) ──
 
 @mixin fr-staff-avatar-ring-developer {
-  box-shadow:
-    0 0 0 2px var(--fr-bg-primary),
-    0 0 0 3px var(--fr-accent-blue),
-    0 0 6px var(--fr-glow-blue);
+  outline: 2px solid var(--fr-accent-blue);
+  outline-offset: 2px;
+  box-shadow: 0 0 8px var(--fr-glow-blue);
 }
 
 @mixin fr-staff-avatar-ring-lead {
+  outline: 2px solid var(--fr-accent-blue);
+  outline-offset: 2px;
   box-shadow:
-    0 0 0 2px var(--fr-bg-primary),
-    0 0 0 3px var(--fr-accent-blue),
-    0 0 0 4px var(--fr-accent-red),
-    0 0 8px var(--fr-glow-blue);
+    0 0 0 3px var(--fr-accent-red),
+    0 0 10px var(--fr-glow-blue);
 }
 
+// JS-added classes + Discourse native group classes on poster links
 .fr-staff-avatar--developers img.avatar,
-.fr-staff-avatar--developers .avatar,
-.fr-staff-avatar.fr-staff-avatar--developers img.avatar,
-.topic-post.group--developers .topic-avatar img.avatar {
+.fr-staff-avatar--developers.avatar,
+a.group-Developers img.avatar,
+a.group-Developers .avatar,
+.topic-list .posters a.group-Developers img.avatar,
+.topic-post.group-Developers .topic-avatar img.avatar,
+.topic-post.group--Developers .topic-avatar img.avatar,
+.topic-post.group--developers .topic-avatar img.avatar,
+.user-card.Developers img.avatar,
+.user-card.group--Developers img.avatar {
   @include fr-staff-avatar-ring-developer;
 }
 
 .fr-staff-avatar--leaddeveloper img.avatar,
-.fr-staff-avatar--leaddeveloper .avatar,
-.fr-staff-avatar.fr-staff-avatar--leaddeveloper img.avatar,
-.topic-post.group--leaddeveloper .topic-avatar img.avatar {
+.fr-staff-avatar--leaddeveloper.avatar,
+a.group-LeadDeveloper img.avatar,
+a.group-LeadDeveloper .avatar,
+.topic-list .posters a.group-LeadDeveloper img.avatar,
+.topic-post.group-LeadDeveloper .topic-avatar img.avatar,
+.topic-post.group--LeadDeveloper .topic-avatar img.avatar,
+.topic-post.group--leaddeveloper .topic-avatar img.avatar,
+.user-card.LeadDeveloper img.avatar,
+.user-card.group--LeadDeveloper img.avatar {
   @include fr-staff-avatar-ring-lead;
 }
 
 // ── User profile staff distinction ──
 
 .user-main .user-profile-names {
-  span.group--leaddeveloper,
-  span.group--developers {
+  span.LeadDeveloper,
+  span.group--LeadDeveloper,
+  span.group--leaddeveloper {
     &::after {
+      content: "Lead Developer";
       position: static;
       display: inline-block;
       height: auto;
@@ -517,36 +647,60 @@ span.username.group--developers {
       text-transform: uppercase;
       vertical-align: middle;
       pointer-events: none;
+      color: var(--fr-text-primary);
+      background: rgba(59, 130, 246, 0.15);
+      border: 1px solid rgba(59, 130, 246, 0.35);
       background-image: none;
     }
   }
 
-  span.group--leaddeveloper::after {
-    content: "Lead Developer";
-    color: var(--fr-text-primary);
-    background: rgba(59, 130, 246, 0.15);
-    border: 1px solid rgba(59, 130, 246, 0.35);
-  }
-
-  span.group--developers::after {
-    content: "Development Team";
-    color: var(--fr-accent-blue);
-    background: rgba(59, 130, 246, 0.1);
-    border: 1px solid rgba(59, 130, 246, 0.25);
+  span.Developers,
+  span.group--Developers,
+  span.group--developers {
+    &::after {
+      content: "Development Team";
+      position: static;
+      display: inline-block;
+      height: auto;
+      margin-left: 0.5em;
+      padding: 0.15em 0.5em;
+      font-family: var(--fr-font-display);
+      font-size: 0.6rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      vertical-align: middle;
+      pointer-events: none;
+      color: var(--fr-accent-blue);
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.25);
+      background-image: none;
+    }
   }
 }
 
-.user-main:has(.group--leaddeveloper) .user-profile-avatar img.avatar,
-.user-main:has(.group--developers) .user-profile-avatar img.avatar {
-  @include fr-staff-avatar-ring-developer;
-}
-
-.user-main:has(.group--leaddeveloper) .user-profile-avatar img.avatar {
+.user-main.LeadDeveloper .user-profile-avatar img.avatar,
+.user-main.group--LeadDeveloper .user-profile-avatar img.avatar,
+.user-main:has(.LeadDeveloper) .user-profile-avatar img.avatar,
+.user-main:has(.group--LeadDeveloper) .user-profile-avatar img.avatar {
   @include fr-staff-avatar-ring-lead;
 }
 
-.user-main:has(.group--leaddeveloper) .about.collapsed-info,
-.user-main:has(.group--developers) .about.collapsed-info {
+.user-main.Developers .user-profile-avatar img.avatar,
+.user-main.group--Developers .user-profile-avatar img.avatar,
+.user-main:has(.Developers) .user-profile-avatar img.avatar,
+.user-main:has(.group--Developers) .user-profile-avatar img.avatar {
+  @include fr-staff-avatar-ring-developer;
+}
+
+.user-main.LeadDeveloper .about.collapsed-info,
+.user-main.group--LeadDeveloper .about.collapsed-info,
+.user-main:has(.LeadDeveloper) .about.collapsed-info,
+.user-main:has(.group--LeadDeveloper) .about.collapsed-info,
+.user-main.Developers .about.collapsed-info,
+.user-main.group--Developers .about.collapsed-info,
+.user-main:has(.Developers) .about.collapsed-info,
+.user-main:has(.group--Developers) .about.collapsed-info {
   border-top: 2px solid transparent;
   border-image: linear-gradient(
       90deg,
