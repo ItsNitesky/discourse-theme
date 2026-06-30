@@ -1,6 +1,477 @@
-@import "variables";
-@import "background";
-@import "lightbar";
-@import "header";
-@import "components";
-@import "staff_usernames";
+// =============================================================================
+// First Response Discourse Theme — common styles
+// Discourse only compiles common.scss, desktop.scss, and mobile.scss entrypoints.
+// Do not split into @import partials — they are not available at compile time.
+// =============================================================================
+
+// ── Design tokens (ported from main-site/app/globals.css) ──
+
+:root {
+  --fr-bg-primary: #050508;
+  --fr-bg-secondary: #0c0c12;
+  --fr-text-primary: #f0f0f2;
+  --fr-text-muted: #8b8b9a;
+  --fr-accent-red: #e63946;
+  --fr-accent-red-dim: #b82d38;
+  --fr-accent-blue: #3b82f6;
+  --fr-accent-blue-dim: #2563eb;
+  --fr-accent-blue-bright: #60a5fa;
+  --fr-surface: rgba(12, 12, 18, 0.55);
+  --fr-surface-elevated: rgba(18, 18, 28, 0.7);
+  --fr-border: rgba(255, 255, 255, 0.07);
+  --fr-border-hover: rgba(255, 255, 255, 0.14);
+  --fr-glow-blue: rgba(59, 130, 246, 0.18);
+  --fr-glow-red: rgba(230, 57, 70, 0.18);
+  --fr-font-display: "Oswald", system-ui, sans-serif;
+  --fr-font-body: "Inter", system-ui, sans-serif;
+  --fr-radius: 2px;
+}
+
+// ── Atmospheric background ──
+
+@if $fr_enable_atmospheric_bg {
+  body {
+    background-color: var(--fr-bg-primary);
+    background-image:
+      radial-gradient(
+        ellipse 120% 80% at 50% -20%,
+        rgba(59, 130, 246, 0.09),
+        transparent 50%
+      ),
+      radial-gradient(
+        ellipse 80% 60% at 100% 50%,
+        rgba(230, 57, 70, 0.06),
+        transparent 45%
+      ),
+      radial-gradient(
+        ellipse 80% 60% at 0% 60%,
+        rgba(59, 130, 246, 0.05),
+        transparent 45%
+      ),
+      radial-gradient(
+        ellipse 100% 50% at 50% 110%,
+        rgba(230, 57, 70, 0.04),
+        transparent 50%
+      );
+    background-attachment: fixed;
+  }
+
+  #main-outlet-wrapper,
+  .wrap {
+    background: transparent;
+  }
+}
+
+// ── Header + static emergency lightbar ──
+
+.d-header {
+  position: relative;
+  background: rgba(5, 5, 8, 0.85);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      var(--fr-accent-blue) 20%,
+      var(--fr-accent-blue) 45%,
+      #fff 50%,
+      var(--fr-accent-red) 55%,
+      var(--fr-accent-red) 80%,
+      transparent 100%
+    );
+    box-shadow:
+      -12px 0 24px -4px var(--fr-glow-blue),
+      12px 0 24px -4px var(--fr-glow-red);
+    pointer-events: none;
+    z-index: 1;
+  }
+}
+
+.d-header-icons .icon,
+.d-header-icons .d-icon,
+.header-sidebar-toggle button .d-icon,
+.extra-info-wrapper .discourse-tags {
+  color: var(--header_primary);
+}
+
+.d-header .title {
+  overflow: visible;
+}
+
+.d-header .title img,
+.d-header #site-logo {
+  max-height: 3.5em;
+  width: auto;
+}
+
+@if $fr_logo_url != "" {
+  .d-header .title img,
+  .d-header #site-logo {
+    content: url("#{$fr_logo_url}");
+  }
+}
+
+// ── Typography ──
+
+body,
+.cooked,
+.d-editor-input {
+  font-family: var(--fr-font-body);
+}
+
+h1,
+h2,
+h3,
+h4,
+.category-name,
+.category-title,
+.nav-pills > li a,
+.create,
+.btn,
+.d-modal .modal-title,
+.topic-list-header .topic-list-data,
+.badge-wrapper .badge-category {
+  font-family: var(--fr-font-display);
+  letter-spacing: 0.05em;
+}
+
+.category-name,
+.nav-pills > li a,
+.create {
+  text-transform: uppercase;
+}
+
+// ── Glass cards ──
+
+.topic-list-item,
+.category-list-item,
+.boxed,
+.user-main .about,
+.user-card,
+.d-modal .modal-inner-container,
+.menu-panel,
+.search-menu .results,
+.select-kit.single-select .select-kit-header,
+.select-kit.combo-box .select-kit-header {
+  background: var(--fr-surface);
+  border: 1px solid var(--fr-border);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: var(--fr-radius);
+  transition:
+    border-color 0.35s ease,
+    box-shadow 0.35s ease;
+}
+
+.topic-list-item:hover,
+.category-list-item:hover {
+  border-color: var(--fr-border-hover);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.05),
+    -12px 0 32px -10px var(--fr-glow-blue),
+    12px 0 32px -10px var(--fr-glow-red);
+}
+
+// ── Buttons ──
+
+.btn {
+  border-radius: var(--fr-radius);
+  font-family: var(--fr-font-display);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  transition:
+    background-color 0.3s ease,
+    box-shadow 0.3s ease,
+    transform 0.15s ease,
+    border-color 0.3s ease;
+
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
+.btn-primary,
+.btn.create {
+  background: linear-gradient(
+    135deg,
+    var(--fr-accent-blue) 0%,
+    var(--fr-accent-blue-dim) 100%
+  );
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+
+  .d-icon {
+    color: #fff;
+  }
+
+  &:hover,
+  &:focus {
+    background: linear-gradient(
+      135deg,
+      var(--fr-accent-blue) 0%,
+      var(--fr-accent-blue-dim) 100%
+    );
+    box-shadow:
+      0 0 32px rgba(59, 130, 246, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    color: #fff;
+
+    .d-icon {
+      color: #fff;
+    }
+  }
+}
+
+.btn-danger {
+  background: linear-gradient(
+    135deg,
+    var(--fr-accent-red) 0%,
+    var(--fr-accent-red-dim) 100%
+  );
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+
+  &:hover,
+  &:focus {
+    box-shadow:
+      0 0 32px rgba(230, 57, 70, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  }
+}
+
+.btn-default,
+.btn.no-text {
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--fr-text-primary);
+  border: 1px solid var(--fr-border);
+  backdrop-filter: blur(8px);
+
+  &:hover {
+    border-color: var(--fr-border-hover);
+    background: rgba(255, 255, 255, 0.06);
+    box-shadow: 0 0 24px rgba(255, 255, 255, 0.05);
+  }
+}
+
+// ── Nav pills ──
+
+.nav-pills {
+  > li a {
+    position: relative;
+    color: var(--fr-text-muted);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    border-radius: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(
+        90deg,
+        var(--fr-accent-blue),
+        var(--fr-accent-red)
+      );
+      transform: scaleX(0);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    &:hover {
+      color: var(--fr-text-primary);
+      background: transparent;
+
+      &::after {
+        transform: scaleX(1);
+      }
+    }
+
+    &.active {
+      color: var(--fr-text-primary);
+      background: transparent;
+      font-weight: 600;
+
+      &::after {
+        transform: scaleX(1);
+      }
+    }
+  }
+}
+
+// ── Links ──
+
+a {
+  color: var(--tertiary);
+
+  &:hover {
+    color: var(--fr-accent-blue-bright);
+  }
+}
+
+// ── Section divider accent ──
+
+.container.posts,
+.list-controls {
+  border-bottom: 1px solid transparent;
+  background-image: linear-gradient(
+    90deg,
+    transparent,
+    rgba(59, 130, 246, 0.2) 15%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(230, 57, 70, 0.2) 85%,
+    transparent
+  );
+  background-size: 100% 1px;
+  background-repeat: no-repeat;
+  background-position: bottom;
+}
+
+// ── Topic posts ──
+
+.topic-post {
+  border-radius: var(--fr-radius);
+}
+
+.topic-body {
+  border: 1px solid var(--fr-border);
+  border-radius: var(--fr-radius);
+  background: var(--fr-surface);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+// ── Input fields ──
+
+.d-editor-input,
+input[type="text"],
+input[type="password"],
+input[type="email"],
+textarea,
+.select-kit.single-select .select-kit-header {
+  border-radius: var(--fr-radius);
+  border-color: var(--fr-border);
+  background: rgba(12, 12, 18, 0.8);
+
+  &:focus,
+  &:focus-within {
+    border-color: var(--fr-border-hover);
+    box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.2);
+  }
+}
+
+// ── Staff / dev team username styling ──
+
+@mixin fr-username-gradient($gradient, $shadow: none) {
+  background: $gradient;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  @if $shadow != none {
+    filter: drop-shadow($shadow);
+  }
+}
+
+@mixin fr-staff-username-styles {
+  &.admin a {
+    @include fr-username-gradient(
+      linear-gradient(135deg, var(--fr-accent-red) 0%, #f0f0f2 100%),
+      0 0 8px rgba(230, 57, 70, 0.35)
+    );
+    font-weight: 600;
+  }
+
+  &.group--leaddeveloper {
+    position: relative;
+
+    a {
+      @include fr-username-gradient(
+        linear-gradient(180deg, var(--fr-accent-blue) 0%, #fff 70%)
+      );
+      font-weight: 600;
+    }
+
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(
+        90deg,
+        var(--fr-accent-blue),
+        var(--fr-accent-red)
+      );
+      pointer-events: none;
+    }
+  }
+
+  &.group--developers a {
+    color: var(--fr-accent-blue);
+    -webkit-text-fill-color: var(--fr-accent-blue);
+
+    &:hover {
+      color: var(--fr-accent-blue-bright);
+      -webkit-text-fill-color: var(--fr-accent-blue-bright);
+    }
+  }
+}
+
+.names span {
+  @include fr-staff-username-styles;
+}
+
+.topic-list .poster-names span,
+.latest-topic-list-item .poster-names span,
+.top-lists .poster-names span {
+  @include fr-staff-username-styles;
+}
+
+.user-card .names span,
+.user-main .names span,
+.user-info .names span {
+  @include fr-staff-username-styles;
+}
+
+.chat-message-info .names span {
+  @include fr-staff-username-styles;
+}
+
+@if $fr_staff_label_enabled {
+  .names span.admin {
+    &::after {
+      content: "STAFF";
+      display: inline;
+      font-family: var(--fr-font-display);
+      font-size: 0.55rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--fr-accent-red);
+      opacity: 0.7;
+      margin-left: 0.35em;
+      vertical-align: middle;
+    }
+  }
+}
