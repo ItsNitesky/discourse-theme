@@ -308,13 +308,38 @@ h4,
 
     &.active {
       color: var(--fr-text-primary);
-      background: transparent;
+      background: rgba(59, 130, 246, 0.1);
       font-weight: 600;
+
+      .d-icon,
+      .svg-icon {
+        color: var(--fr-accent-blue);
+      }
 
       &::after {
         transform: scaleX(1);
       }
     }
+  }
+}
+
+// Override Discourse core active-tab fill (bright tertiary background)
+.nav-pills > li > a.active,
+.nav-pills > li > a.active:hover,
+.nav-pills > li > a.active:focus,
+.horizontal-overflow-nav .nav-pills > li > a.active,
+.group-nav .nav-pills > li > a.active,
+.user-navigation .nav-pills > li > a.active,
+.admin-controls .nav-pills > li > a.active {
+  background-color: rgba(59, 130, 246, 0.1) !important;
+  color: var(--fr-text-primary) !important;
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  border-radius: var(--fr-radius);
+  box-shadow: none;
+
+  .d-icon,
+  .svg-icon {
+    color: var(--fr-accent-blue) !important;
   }
 }
 
@@ -346,18 +371,22 @@ a {
   background-position: bottom;
 }
 
-// ── Topic posts ──
+// ── Topic posts (single card wrapping avatar + body) ──
 
 .topic-post {
-  border-radius: var(--fr-radius);
-}
-
-.topic-body {
   border: 1px solid var(--fr-border);
   border-radius: var(--fr-radius);
   background: var(--fr-surface);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
+
+  .topic-body {
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
 }
 
 // ── Input fields ──
@@ -379,55 +408,45 @@ textarea,
   }
 }
 
-// ── Staff / dev team username styling ──
+// ── Dev team username styling (LeadDeveloper + Developers only) ──
 
-@mixin fr-username-gradient($gradient, $shadow: none) {
+@mixin fr-username-gradient($gradient) {
   background: $gradient;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-
-  @if $shadow != none {
-    filter: drop-shadow($shadow);
-  }
 }
 
-@mixin fr-staff-username-styles {
-  &.admin a {
+@mixin fr-leaddeveloper-username {
+  position: relative;
+
+  > a,
+  a {
     @include fr-username-gradient(
-      linear-gradient(135deg, var(--fr-accent-red) 0%, #f0f0f2 100%),
-      0 0 8px rgba(230, 57, 70, 0.35)
+      linear-gradient(180deg, var(--fr-accent-blue) 0%, #fff 70%)
     );
     font-weight: 600;
   }
 
-  &.group--leaddeveloper {
-    position: relative;
-
-    a {
-      @include fr-username-gradient(
-        linear-gradient(180deg, var(--fr-accent-blue) 0%, #fff 70%)
-      );
-      font-weight: 600;
-    }
-
-    &::after {
-      content: "";
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 1px;
-      background: linear-gradient(
-        90deg,
-        var(--fr-accent-blue),
-        var(--fr-accent-red)
-      );
-      pointer-events: none;
-    }
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      var(--fr-accent-blue),
+      var(--fr-accent-red)
+    );
+    pointer-events: none;
   }
+}
 
-  &.group--developers a {
+@mixin fr-developer-username {
+  > a,
+  a {
     color: var(--fr-accent-blue);
     -webkit-text-fill-color: var(--fr-accent-blue);
 
@@ -438,40 +457,101 @@ textarea,
   }
 }
 
-.names span {
-  @include fr-staff-username-styles;
+// Global — posts, topic lists, user directory, user card, profile, chat
+span.group--leaddeveloper,
+span.username.group--leaddeveloper {
+  @include fr-leaddeveloper-username;
 }
 
-.topic-list .poster-names span,
-.latest-topic-list-item .poster-names span,
-.top-lists .poster-names span {
-  @include fr-staff-username-styles;
+span.group--developers,
+span.username.group--developers {
+  @include fr-developer-username;
 }
 
-.user-card .names span,
-.user-main .names span,
-.user-info .names span {
-  @include fr-staff-username-styles;
+// ── Staff avatar rings (Developers + LeadDeveloper) ──
+
+@mixin fr-staff-avatar-ring-developer {
+  box-shadow:
+    0 0 0 2px var(--fr-bg-primary),
+    0 0 0 3px var(--fr-accent-blue),
+    0 0 6px var(--fr-glow-blue);
 }
 
-.chat-message-info .names span {
-  @include fr-staff-username-styles;
+@mixin fr-staff-avatar-ring-lead {
+  box-shadow:
+    0 0 0 2px var(--fr-bg-primary),
+    0 0 0 3px var(--fr-accent-blue),
+    0 0 0 4px var(--fr-accent-red),
+    0 0 8px var(--fr-glow-blue);
 }
 
-@if $fr_staff_label_enabled {
-  .names span.admin {
+.fr-staff-avatar--developers img.avatar,
+.fr-staff-avatar--developers .avatar,
+.fr-staff-avatar.fr-staff-avatar--developers img.avatar,
+.topic-post.group--developers .topic-avatar img.avatar {
+  @include fr-staff-avatar-ring-developer;
+}
+
+.fr-staff-avatar--leaddeveloper img.avatar,
+.fr-staff-avatar--leaddeveloper .avatar,
+.fr-staff-avatar.fr-staff-avatar--leaddeveloper img.avatar,
+.topic-post.group--leaddeveloper .topic-avatar img.avatar {
+  @include fr-staff-avatar-ring-lead;
+}
+
+// ── User profile staff distinction ──
+
+.user-main .user-profile-names {
+  span.group--leaddeveloper,
+  span.group--developers {
     &::after {
-      content: "STAFF";
-      display: inline;
+      position: static;
+      display: inline-block;
+      height: auto;
+      margin-left: 0.5em;
+      padding: 0.15em 0.5em;
       font-family: var(--fr-font-display);
-      font-size: 0.55rem;
+      font-size: 0.6rem;
       font-weight: 500;
-      letter-spacing: 0.2em;
+      letter-spacing: 0.15em;
       text-transform: uppercase;
-      color: var(--fr-accent-red);
-      opacity: 0.7;
-      margin-left: 0.35em;
       vertical-align: middle;
+      pointer-events: none;
+      background-image: none;
     }
   }
+
+  span.group--leaddeveloper::after {
+    content: "Lead Developer";
+    color: var(--fr-text-primary);
+    background: rgba(59, 130, 246, 0.15);
+    border: 1px solid rgba(59, 130, 246, 0.35);
+  }
+
+  span.group--developers::after {
+    content: "Development Team";
+    color: var(--fr-accent-blue);
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.25);
+  }
+}
+
+.user-main:has(.group--leaddeveloper) .user-profile-avatar img.avatar,
+.user-main:has(.group--developers) .user-profile-avatar img.avatar {
+  @include fr-staff-avatar-ring-developer;
+}
+
+.user-main:has(.group--leaddeveloper) .user-profile-avatar img.avatar {
+  @include fr-staff-avatar-ring-lead;
+}
+
+.user-main:has(.group--leaddeveloper) .about.collapsed-info,
+.user-main:has(.group--developers) .about.collapsed-info {
+  border-top: 2px solid transparent;
+  border-image: linear-gradient(
+      90deg,
+      var(--fr-accent-blue),
+      var(--fr-accent-red)
+    )
+    1;
 }

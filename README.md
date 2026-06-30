@@ -8,7 +8,8 @@ A custom dark theme for [forum.firstresponsegame.com](https://forum.firstrespons
 - Inter + Oswald typography
 - Static emergency lightbar on the header
 - Glass-style topic/category cards
-- Tiered staff username styling for Admins, LeadDeveloper, and Developers groups
+- Tiered dev team username styling for **LeadDeveloper** and **Developers** groups
+- Staff avatar rings on topic lists, posts, profiles, and user cards
 
 ## Installation
 
@@ -52,7 +53,6 @@ Under **Admin → Customize → Themes → First Response → Settings**:
 |---------|-------------|
 | **fr_logo_url** | Header logo URL (defaults to `https://firstresponsegame.com/logo.png`) |
 | **fr_enable_atmospheric_bg** | Toggle the subtle blue/red gradient background |
-| **fr_staff_label_enabled** | Show a small "STAFF" label next to admin usernames |
 
 You can also upload a logo via **Admin → Settings → Branding → Logo** and clear `fr_logo_url` to use that instead.
 
@@ -64,28 +64,27 @@ Copy `logo.png` from your main site into `assets/logo.png` for bundled theme ass
 main-site/public/logo.png  →  discourse-theme/assets/logo.png
 ```
 
-## Staff username styling
+## Dev team styling
 
-The theme styles usernames differently by role:
+The theme styles **LeadDeveloper** and **Developers** primary group members across the forum:
 
-| Group | Appearance |
-|-------|------------|
-| **Admins** | Red-to-white gradient text with subtle glow |
-| **LeadDeveloper** | Blue-to-white gradient with blue/red underline |
-| **Developers** | Solid blue (`#3b82f6`) |
+| Group | Username | Avatar ring |
+|-------|----------|-------------|
+| **LeadDeveloper** | Blue-to-white gradient + underline | Blue + red double ring |
+| **Developers** | Solid blue (`#3b82f6`) | Blue ring |
+
+Styling applies in posts, topic lists, the user directory, user cards, group About pages, and user profiles.
+
+On user profiles, a **Lead Developer** or **Development Team** badge appears next to the username, and the profile header gets a blue/red accent border.
 
 ### Prerequisites
 
-- **Admins** are styled automatically via Discourse's built-in `.admin` class.
-- **Developers** and **LeadDeveloper** require each user to have that group set as their **Primary Group**:
-  1. Go to **Admin → Users → [username]**
-  2. Under Groups, set **Primary Group** to `Developers` or `LeadDeveloper`
+**Developers** and **LeadDeveloper** must be set as each user's **Primary Group**:
 
-Verify the exact CSS class names in browser DevTools on a test post. Discourse lowercases group names (e.g. `LeadDeveloper` → `group--leaddeveloper`).
+1. Go to **Admin → Users → [username]**
+2. Under Groups, set **Primary Group** to `Developers` or `LeadDeveloper`
 
-### Optional: group flair
-
-For extra visibility, configure avatar flair on each group under **Admin → Groups → [group] → Flair**.
+Verify CSS class names in DevTools on a test post. Discourse lowercases group names (e.g. `LeadDeveloper` → `group--leaddeveloper`).
 
 ## Local development
 
@@ -101,6 +100,8 @@ discourse-theme/
 ├── common/
 │   ├── common.scss         # All global styles (single entrypoint)
 │   └── head_tag.html       # Google Fonts (Inter, Oswald)
+├── javascripts/
+│   └── discourse/api-initializers/fr-staff.js  # Staff avatar ring classes
 ├── desktop/
 │   └── desktop.scss        # Desktop layout tweaks
 └── mobile/
