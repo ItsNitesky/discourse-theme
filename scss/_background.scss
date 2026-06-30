@@ -1,0 +1,34 @@
+// Simplified atmospheric background (no animated orbs)
+
+@if $fr_enable_atmospheric_bg {
+  body {
+    background-color: var(--fr-bg-primary);
+    background-image:
+      radial-gradient(
+        ellipse 120% 80% at 50% -20%,
+        rgba(59, 130, 246, 0.09),
+        transparent 50%
+      ),
+      radial-gradient(
+        ellipse 80% 60% at 100% 50%,
+        rgba(230, 57, 70, 0.06),
+        transparent 45%
+      ),
+      radial-gradient(
+        ellipse 80% 60% at 0% 60%,
+        rgba(59, 130, 246, 0.05),
+        transparent 45%
+      ),
+      radial-gradient(
+        ellipse 100% 50% at 50% 110%,
+        rgba(230, 57, 70, 0.04),
+        transparent 50%
+      );
+    background-attachment: fixed;
+  }
+
+  #main-outlet-wrapper,
+  .wrap {
+    background: transparent;
+  }
+}

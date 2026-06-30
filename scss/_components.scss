@@ -1,0 +1,259 @@
+// Buttons, cards, nav, topic lists — main-site dispatch aesthetic
+
+// ── Typography ──
+
+body,
+.cooked,
+.d-editor-input {
+  font-family: var(--fr-font-body);
+}
+
+h1,
+h2,
+h3,
+h4,
+.category-name,
+.category-title,
+.nav-pills > li a,
+.create,
+.btn,
+.d-modal .modal-title,
+.topic-list-header .topic-list-data,
+.badge-wrapper .badge-category {
+  font-family: var(--fr-font-display);
+  letter-spacing: 0.05em;
+}
+
+.category-name,
+.nav-pills > li a,
+.create {
+  text-transform: uppercase;
+}
+
+// ── Glass cards ──
+
+.topic-list-item,
+.category-list-item,
+.boxed,
+.user-main .about,
+.user-card,
+.d-modal .modal-inner-container,
+.menu-panel,
+.search-menu .results,
+.select-kit.single-select .select-kit-header,
+.select-kit.combo-box .select-kit-header {
+  background: var(--fr-surface);
+  border: 1px solid var(--fr-border);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: var(--fr-radius);
+  transition:
+    border-color 0.35s ease,
+    box-shadow 0.35s ease;
+}
+
+.topic-list-item:hover,
+.category-list-item:hover {
+  border-color: var(--fr-border-hover);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.05),
+    -12px 0 32px -10px var(--fr-glow-blue),
+    12px 0 32px -10px var(--fr-glow-red);
+}
+
+// ── Buttons ──
+
+.btn {
+  border-radius: var(--fr-radius);
+  font-family: var(--fr-font-display);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  transition:
+    background-color 0.3s ease,
+    box-shadow 0.3s ease,
+    transform 0.15s ease,
+    border-color 0.3s ease;
+
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
+.btn-primary,
+.btn.create {
+  background: linear-gradient(
+    135deg,
+    var(--fr-accent-blue) 0%,
+    var(--fr-accent-blue-dim) 100%
+  );
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+
+  .d-icon {
+    color: #fff;
+  }
+
+  &:hover,
+  &:focus {
+    background: linear-gradient(
+      135deg,
+      var(--fr-accent-blue) 0%,
+      var(--fr-accent-blue-dim) 100%
+    );
+    box-shadow:
+      0 0 32px rgba(59, 130, 246, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    color: #fff;
+
+    .d-icon {
+      color: #fff;
+    }
+  }
+}
+
+.btn-danger {
+  background: linear-gradient(
+    135deg,
+    var(--fr-accent-red) 0%,
+    var(--fr-accent-red-dim) 100%
+  );
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+
+  &:hover,
+  &:focus {
+    box-shadow:
+      0 0 32px rgba(230, 57, 70, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  }
+}
+
+.btn-default,
+.btn.no-text {
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--fr-text-primary);
+  border: 1px solid var(--fr-border);
+  backdrop-filter: blur(8px);
+
+  &:hover {
+    border-color: var(--fr-border-hover);
+    background: rgba(255, 255, 255, 0.06);
+    box-shadow: 0 0 24px rgba(255, 255, 255, 0.05);
+  }
+}
+
+// ── Nav pills (main-site .nav-link pattern) ──
+
+.nav-pills {
+  > li a {
+    position: relative;
+    color: var(--fr-text-muted);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    border-radius: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(
+        90deg,
+        var(--fr-accent-blue),
+        var(--fr-accent-red)
+      );
+      transform: scaleX(0);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    &:hover {
+      color: var(--fr-text-primary);
+      background: transparent;
+
+      &::after {
+        transform: scaleX(1);
+      }
+    }
+
+    &.active {
+      color: var(--fr-text-primary);
+      background: transparent;
+      font-weight: 600;
+
+      &::after {
+        transform: scaleX(1);
+      }
+    }
+  }
+}
+
+// ── Links ──
+
+a {
+  color: var(--tertiary);
+
+  &:hover {
+    color: var(--fr-accent-blue-bright);
+  }
+}
+
+// ── Section divider accent ──
+
+.container.posts,
+.list-controls {
+  border-bottom: 1px solid transparent;
+  background-image: linear-gradient(
+    90deg,
+    transparent,
+    rgba(59, 130, 246, 0.2) 15%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(230, 57, 70, 0.2) 85%,
+    transparent
+  );
+  background-size: 100% 1px;
+  background-repeat: no-repeat;
+  background-position: bottom;
+}
+
+// ── Topic post highlight ──
+
+.topic-post {
+  border-radius: var(--fr-radius);
+}
+
+.topic-body {
+  border: 1px solid var(--fr-border);
+  border-radius: var(--fr-radius);
+  background: var(--fr-surface);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+// ── Input fields ──
+
+.d-editor-input,
+input[type="text"],
+input[type="password"],
+input[type="email"],
+textarea,
+.select-kit.single-select .select-kit-header {
+  border-radius: var(--fr-radius);
+  border-color: var(--fr-border);
+  background: rgba(12, 12, 18, 0.8);
+
+  &:focus,
+  &:focus-within {
+    border-color: var(--fr-border-hover);
+    box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.2);
+  }
+}

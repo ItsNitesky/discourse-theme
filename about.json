@@ -1,0 +1,38 @@
+{
+  "name": "First Response",
+  "about_url": "https://firstresponsegame.com",
+  "license_url": null,
+  "component": false,
+  "authors": "Nitesky Games",
+  "theme_version": "1.0.0",
+  "minimum_discourse_version": null,
+  "maximum_discourse_version": null,
+  "assets": {
+    "fr-logo": "assets/logo.png"
+  },
+  "color_schemes": {
+    "First Response Dark": {
+      "primary": "f0f0f2",
+      "secondary": "050508",
+      "tertiary": "3b82f6",
+      "quaternary": "e63946",
+      "header_background": "0c0c12",
+      "header_primary": "f0f0f2",
+      "highlight": "12121c",
+      "danger": "e63946",
+      "success": "22c55e",
+      "love": "e63946",
+      "primary-very-low": "12121c",
+      "primary-low": "1a1a24",
+      "primary-low-mid": "3a3a48",
+      "primary-medium": "8b8b9a",
+      "primary-high": "c4c4cc",
+      "primary-very-high": "e8e8ec",
+      "secondary-low": "8b8b9a",
+      "secondary-medium": "5a5a68",
+      "secondary-high": "2a2a34",
+      "secondary-very-high": "0c0c12"
+    }
+  },
+  "learn_more": "https://meta.discourse.org/t/beginners-guide-to-using-discourse-themes/91966"
+}

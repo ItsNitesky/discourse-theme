@@ -1,0 +1,14 @@
+fr_logo_url:
+  type: string
+  default: "https://firstresponsegame.com/logo.png"
+  description: "URL for the forum header logo. Leave empty to use the logo uploaded in Discourse admin."
+
+fr_enable_atmospheric_bg:
+  type: bool
+  default: true
+  description: "Enable the subtle blue/red atmospheric gradient background."
+
+fr_staff_label_enabled:
+  type: bool
+  default: false
+  description: "Show a small STAFF label next to admin usernames."
