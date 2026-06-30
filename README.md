@@ -99,19 +99,18 @@ discourse-theme/
 ├── settings.yml            # Theme settings
 ├── assets/                 # Logo and other static assets
 ├── common/
-│   ├── common.scss         # Global styles
-│   └── head_tag.html       # Google Fonts (Inter, Oswald)
+│   ├── common.scss         # Global styles entrypoint
+│   ├── head_tag.html       # Google Fonts (Inter, Oswald)
+│   ├── _variables.scss     # Design tokens
+│   ├── _lightbar.scss      # Static emergency lightbar
+│   ├── _background.scss    # Atmospheric gradient
+│   ├── _header.scss        # Glass header
+│   ├── _components.scss    # Buttons, cards, nav
+│   └── _staff_usernames.scss
 ├── desktop/
-│   └── desktop.scss        # Header lightbar, desktop layout
-├── mobile/
-│   └── mobile.scss         # Mobile header tweaks
-└── scss/
-    ├── _variables.scss     # Design tokens
-    ├── _lightbar.scss      # Static emergency lightbar
-    ├── _background.scss    # Atmospheric gradient
-    ├── _header.scss        # Glass header
-    ├── _components.scss    # Buttons, cards, nav
-    └── _staff_usernames.scss
+│   └── desktop.scss        # Desktop layout tweaks
+└── mobile/
+    └── mobile.scss         # Mobile header tweaks
 ```
 
 ## References
